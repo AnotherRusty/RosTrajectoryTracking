@@ -25,6 +25,7 @@
 #include <gtt_planner/global_trajectory.h>
 #include <ros/ros.h>
 #include <yaml-cpp/yaml.h>
+#include <ros/package.h>
 
 namespace gtt_planner {
 
@@ -35,9 +36,22 @@ GlobalTrajectory::~GlobalTrajectory(){
 };
 
 bool GlobalTrajectory::loadPath(const std::string& file){
+    std::string path_dir = ros::package::getPath("gtt_planner") + std::string("/path/");
     std::string f_ = file + ".yaml";
     ROS_INFO("gtt_planner::GlobalTrajectory loading global trajectory from %s ...", f_.c_str());
-    YAML::Node node = YAML::LoadFile(f_);
+    YAML::Node node = YAML::LoadFile(path_dir+f_);
+    std::string path_name = node["global_path"]["name"].as<std::string>();
+    std::vector<std::pair<int, int> > xy_list = node["global_path"]["waypoints"].as<std::vector<std::pair<int, int> > >();
+
+    int num_waypoints = xy_list.size();
+    gt_.clear();
+    for (int i=0; i<num_waypoints; i++){
+        geometry_msgs::PoseStamped waypoint;
+        waypoint.pose.position.x = xy_list[i].first;
+        waypoint.pose.position.y = xy_list[i].second;
+        gt_.push_back(waypoint);
+    }
+    ROS_INFO("Global path <%s> loaded successfully, containing %d waypoints.", path_name.c_str(), num_waypoints);
 
     return true;
 }

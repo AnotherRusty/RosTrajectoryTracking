@@ -52,14 +52,19 @@ add_library(${PROJECT_NAME}
 
 
 add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
+
+target_link_libraries(${PROJECT_NAME} 
+  ${catkin_LIBRARIES}
+  yaml-cpp
+)
 
 add_executable(planner
   src/gtt_planner_node.cpp
 )
+
 add_dependencies(planner ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(planner
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
-  yaml-cpp
 )
