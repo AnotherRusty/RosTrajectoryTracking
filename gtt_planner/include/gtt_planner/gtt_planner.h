@@ -18,6 +18,7 @@
 #include <gtt_planner/traceback.h>
 #include <gtt_planner/orientation_filter.h>
 #include <gtt_planner/GttPlannerConfig.h>
+#include <gtt_planner/global_trajectory.h>
 
 namespace gtt_planner {
 
@@ -169,6 +170,11 @@ class GttPlanner : public nav_core::BaseGlobalPlanner {
 
         dynamic_reconfigure::Server<gtt_planner::GttPlannerConfig> *dsrv_;
         void reconfigureCB(gtt_planner::GttPlannerConfig &config, uint32_t level);
+        
+        // global trajectory 
+        std::string global_trajectory_file_;
+        GlobalTrajectory* global_trajectory_;
+        std::vector<geometry_msgs::PoseStamped> trimmed_gt_path_;
 
 };
 

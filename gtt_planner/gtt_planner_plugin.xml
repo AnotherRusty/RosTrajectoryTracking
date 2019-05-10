@@ -1,4 +1,4 @@
-<library path="lib/libgtt_planner_lib">
+<library path="lib/libgtt_planner">
     <class name="gtt_planner/GttPlanner" type="gtt_planner::GttPlanner" base_class_type="nav_core::BaseGlobalPlanner">
         <description>Gtt planner for predefined global path.</description>
     </class>

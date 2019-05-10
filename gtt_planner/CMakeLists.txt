@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME}
   src/grid_path.cpp
   src/gradient_path.cpp
   src/orientation_filter.cpp
+  src/global_trajectory.cpp
   src/gtt_planner.cpp
 )
 
@@ -60,4 +61,5 @@ add_dependencies(planner ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_T
 target_link_libraries(planner
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  yaml-cpp
 )

@@ -13,4 +13,4 @@ oscillation_distance: 0.2
 # local planner - default is trajectory rollout
 base_local_planner: "base_local_planner/TrajectoryPlannerROS" #"dwa_local_planner/DWAPlannerROS"
 # base_global_planner: "global_planner/GlobalPlanner"
-base_global_planner: "custom_planner/CustomPlanner" 
+base_global_planner: "gtt_planner/GttPlanner" 

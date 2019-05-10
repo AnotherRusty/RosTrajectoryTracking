@@ -9,6 +9,8 @@
 #include <gtt_planner/grid_path.h>
 #include <gtt_planner/gradient_path.h>
 #include <gtt_planner/quadratic_calculator.h>
+#include <gtt_planner/global_trajectory.h>
+
 
 //register this planner as a BaseGlobalPlanner plugin
 PLUGINLIB_EXPORT_CLASS(gtt_planner::GttPlanner, nav_core::BaseGlobalPlanner)
@@ -32,6 +34,7 @@ void GttPlanner::outlineMap(unsigned char* costarr, int nx, int ny, unsigned cha
 
 GttPlanner::GttPlanner() :
         costmap_(NULL), initialized_(false), allow_unknown_(true) {
+    ROS_INFO("**********Using plugin \"gtt_planner\"************");
 }
 
 GttPlanner::GttPlanner(std::string name, costmap_2d::Costmap2D* costmap, std::string frame_id) :
@@ -49,6 +52,8 @@ GttPlanner::~GttPlanner() {
         delete path_maker_;
     if (dsrv_)
         delete dsrv_;
+    if (global_trajectory_)
+        delete global_trajectory_;
 }
 
 void GttPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros) {
@@ -117,6 +122,14 @@ void GttPlanner::initialize(std::string name, costmap_2d::Costmap2D* costmap, st
         dynamic_reconfigure::Server<gtt_planner::GttPlannerConfig>::CallbackType cb = boost::bind(
                 &GttPlanner::reconfigureCB, this, _1, _2);
         dsrv_->setCallback(cb);
+
+        //get global trajectory
+        private_nh.param("global_trajectory_file", global_trajectory_file_, std::string("default"));
+        global_trajectory_ = new GlobalTrajectory();
+        if(!global_trajectory_->loadPath(global_trajectory_file_)){
+            ROS_ERROR("Failed to load the global trajectory from %s", global_trajectory_file_.c_str());
+            return;
+        }
 
         initialized_ = true;
     } else
@@ -208,6 +221,15 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
         return false;
     }
 
+    // ROS_INFO("gtt planning ...");
+
+    //plan part A - trimmed path by the nearest point on the global trajectory
+    trimmed_gt_path_.clear();
+    global_trajectory_->getTrimmedPath(start, trimmed_gt_path_);
+
+    //plan part B - start to the nearest point on the global trajectory
+    geometry_msgs::PoseStamped nearest = trimmed_gt_path_[0];
+
     double wx = start.pose.position.x;
     double wy = start.pose.position.y;
 
@@ -226,8 +248,8 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
         worldToMap(wx, wy, start_x, start_y);
     }
 
-    wx = goal.pose.position.x;
-    wy = goal.pose.position.y;
+    wx = nearest.pose.position.x;
+    wy = nearest.pose.position.y;
 
     if (!costmap_->worldToMap(wx, wy, goal_x_i, goal_y_i)) {
         ROS_WARN_THROTTLE(1.0,
@@ -265,12 +287,14 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
         publishPotential(potential_array_);
 
     if (found_legal) {
-        //extract the plan
-        if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, goal, plan)) {
-            //make sure the goal we push on has the same timestamp as the rest of the plan
-            geometry_msgs::PoseStamped goal_copy = goal;
-            goal_copy.header.stamp = ros::Time::now();
-            plan.push_back(goal_copy);
+        //extract the plan(part B)
+        if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, nearest, plan)) {
+            //combine with part A
+            for(int i=0; i<trimmed_gt_path_.size(); i++){
+                geometry_msgs::PoseStamped goal_copy = trimmed_gt_path_[i];
+                goal_copy.header.stamp = ros::Time::now();
+                plan.push_back(goal_copy);
+            }
         } else {
             ROS_ERROR("Failed to get a plan from potential when a legal potential was found. This shouldn't happen.");
         }
