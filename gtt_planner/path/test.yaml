@@ -1,13 +1,21 @@
-{global_path: {name: test, waypoints: [!!python/tuple [294, 243], !!python/tuple [
-        294, 245], !!python/tuple [294, 249], !!python/tuple [294, 252], !!python/tuple [
-        294, 256], !!python/tuple [294, 258], !!python/tuple [294, 260], !!python/tuple [
-        294, 263], !!python/tuple [294, 267], !!python/tuple [294, 269], !!python/tuple [
-        293, 271], !!python/tuple [292, 275], !!python/tuple [291, 278], !!python/tuple [
-        290, 282], !!python/tuple [289, 285], !!python/tuple [289, 287], !!python/tuple [
-        288, 290], !!python/tuple [286, 292], !!python/tuple [286, 294], !!python/tuple [
-        284, 296], !!python/tuple [282, 299], !!python/tuple [280, 300], !!python/tuple [
-        279, 302], !!python/tuple [277, 304], !!python/tuple [275, 305], !!python/tuple [
-        273, 307], !!python/tuple [270, 309], !!python/tuple [268, 310], !!python/tuple [
-        266, 311], !!python/tuple [263, 312], !!python/tuple [261, 312], !!python/tuple [
-        258, 312], !!python/tuple [254, 312], !!python/tuple [250, 312], !!python/tuple [
-        246, 312], !!python/tuple [244, 312]]}}
+{global_path: {name: test, waypoints: [!!python/tuple [9, 9], !!python/tuple [14,
+        9], !!python/tuple [18, 10], !!python/tuple [22, 11], !!python/tuple [29,
+        12], !!python/tuple [33, 13], !!python/tuple [41, 17], !!python/tuple [47,
+        19], !!python/tuple [54, 21], !!python/tuple [62, 24], !!python/tuple [69,
+        29], !!python/tuple [76, 30], !!python/tuple [82, 34], !!python/tuple [87,
+        36], !!python/tuple [89, 37], !!python/tuple [94, 40], !!python/tuple [97,
+        42], !!python/tuple [99, 44], !!python/tuple [102, 46], !!python/tuple [105,
+        48], !!python/tuple [109, 52], !!python/tuple [112, 56], !!python/tuple [
+        115, 59], !!python/tuple [117, 63], !!python/tuple [120, 69], !!python/tuple [
+        124, 77], !!python/tuple [126, 81], !!python/tuple [128, 87], !!python/tuple [
+        131, 94], !!python/tuple [133, 103], !!python/tuple [134, 107], !!python/tuple [
+        137, 113], !!python/tuple [138, 118], !!python/tuple [138, 122], !!python/tuple [
+        138, 127], !!python/tuple [139, 133], !!python/tuple [139, 137], !!python/tuple [
+        140, 143], !!python/tuple [140, 149], !!python/tuple [140, 156], !!python/tuple [
+        140, 163], !!python/tuple [140, 173], !!python/tuple [140, 180], !!python/tuple [
+        140, 190], !!python/tuple [140, 199], !!python/tuple [140, 206], !!python/tuple [
+        140, 216], !!python/tuple [140, 224], !!python/tuple [140, 235], !!python/tuple [
+        140, 245], !!python/tuple [140, 254], !!python/tuple [137, 264], !!python/tuple [
+        137, 273], !!python/tuple [136, 280], !!python/tuple [135, 287], !!python/tuple [
+        135, 291], !!python/tuple [134, 295], !!python/tuple [134, 297], !!python/tuple [
+        134, 301], !!python/tuple [132, 302]]}}

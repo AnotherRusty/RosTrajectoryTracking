@@ -37,6 +37,14 @@ PATH_COLOR = (0, 255, 0)    # green
 def get_pos():
     return pygame.mouse.get_pos()
 
+def convert(p):
+    # pygame coordinate:  (0,0) top left
+    # should transform to (0,0) bottom left for ROS map coordinate
+    (px, py) = p
+    rx = px
+    ry = h -py
+    return (rx, ry)
+
 def distance(a, b):
     x1 = a[0]
     x2 = b[0]
@@ -66,7 +74,8 @@ print fpath
 
 pygame.init()
 map = pygame.image.load("../maps/"+MAP_NAME+".pgm")
-screen = pygame.display.set_mode(map.get_size())
+w, h = map.get_size()
+screen = pygame.display.set_mode((w,h))
 
 screen.blit(map, (0,0))
 done = False
@@ -81,9 +90,9 @@ while not done:
                         save_path()
                         done = True
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        start_point = get_pos()
-                        fpath['global_path']['waypoints'].append(start_point)
                         clear_path()
+                        start_point = get_pos()
+                        fpath['global_path']['waypoints'].append(convert(start_point))
                         drawing = True
                 if drawing:
                     if event.type == pygame.MOUSEBUTTONUP:
@@ -93,7 +102,7 @@ while not done:
             end_point = get_pos()
             if(distance(start_point, end_point) > 1):
                 draw_path(start_point, end_point)
-                fpath['global_path']['waypoints'].append(end_point)
+                fpath['global_path']['waypoints'].append(convert(end_point))
                 start_point = end_point
 
         pygame.display.flip()
