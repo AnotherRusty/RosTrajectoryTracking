@@ -244,15 +244,6 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
         return false;
     }
 
-    // ROS_INFO("gtt planning ...");
-
-    //plan part A - trimmed path by the nearest point on the global trajectory
-    trimmed_gt_path_.clear();
-    global_trajectory_->getTrimmedPath(start, trimmed_gt_path_);
-
-    //plan part B - start to the nearest point on the global trajectory
-    geometry_msgs::PoseStamped nearest = trimmed_gt_path_[0];
-
     double wx = start.pose.position.x;
     double wy = start.pose.position.y;
 
@@ -270,9 +261,24 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
     }else{
         worldToMap(wx, wy, start_x, start_y);
     }
+    
+    // ROS_INFO("gtt planning ...");
 
-    wx = nearest.pose.position.x;
-    wy = nearest.pose.position.y;
+    //plan part A - trimmed path by the nearest point on the global trajectory
+    trimmed_gt_path_.clear();
+
+    std::pair<int, int> start_m = std::make_pair(start_x_i, start_y_i);
+    global_trajectory_->getTrimmedPath(start_m, trimmed_gt_path_);
+
+    //plan part B - from start to the nearest point on the global trajectory
+    double nx = trimmed_gt_path_[0].first;
+    double ny = trimmed_gt_path_[0].second;
+    //convert into the world coordinate
+    mapToWorld(nx, ny, wx, wy); 
+    //set the nearest point as new goal
+    geometry_msgs::PoseStamped new_goal;
+    new_goal.pose.position.x = wx;
+    new_goal.pose.position.y = wy;
 
     if (!costmap_->worldToMap(wx, wy, goal_x_i, goal_y_i)) {
         ROS_WARN_THROTTLE(1.0,
@@ -311,10 +317,13 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
 
     if (found_legal) {
         //extract the plan(part B)
-        if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, nearest, plan)) {
+        if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, new_goal, plan)) {
             //combine with part A
             for(int i=0; i<trimmed_gt_path_.size(); i++){
-                geometry_msgs::PoseStamped goal_copy = trimmed_gt_path_[i];
+                geometry_msgs::PoseStamped goal_copy;
+                goal_copy.header.frame_id = frame_id_;
+                goal_copy.pose.position.x = trimmed_gt_path_[i].first;
+                goal_copy.pose.position.y = trimmed_gt_path_[i].second;
                 goal_copy.header.stamp = ros::Time::now();
                 plan.push_back(goal_copy);
             }

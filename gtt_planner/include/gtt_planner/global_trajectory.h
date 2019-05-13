@@ -25,7 +25,6 @@
 #ifndef _GLOBAL_TRAJECTORY_H
 #define _GLOBAL_TRAJECTORY_H
 
-#include <geometry_msgs/PoseStamped.h>
 
 namespace gtt_planner {
 
@@ -45,13 +44,13 @@ class GlobalTrajectory
         /**
          * @brief  Get the full global trajectory.
          */
-        void getFullPath(std::vector<geometry_msgs::PoseStamped>& path);
+        void getFullPath(std::vector<std::pair<int, int> >& path);
 
         /**
          * @brief  Get the trimmed global trajectory to track.
          * @param start  The start point.
          */
-        void getTrimmedPath(const geometry_msgs::PoseStamped& start, std::vector<geometry_msgs::PoseStamped>& path);
+        void getTrimmedPath(const std::pair<int, int>& start, std::vector<std::pair<int, int> >& path);
 
     private:
         /**
@@ -62,7 +61,7 @@ class GlobalTrajectory
          */
         int getNearestPoint(const double& x, const double& y);
 
-        std::vector<geometry_msgs::PoseStamped> gt_;    // glocal trajectory
+        std::vector<std::pair<int, int> > gt_;    // glocal trajectory
 
 };
 

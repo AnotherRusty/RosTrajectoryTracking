@@ -197,7 +197,7 @@ class GttPlanner : public nav_core::BaseGlobalPlanner {
         // global trajectory 
         std::string global_trajectory_file_;
         GlobalTrajectory* global_trajectory_;
-        std::vector<geometry_msgs::PoseStamped> trimmed_gt_path_;
+        std::vector<std::pair<int, int> > trimmed_gt_path_;
 
 };
 
