@@ -267,14 +267,14 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
     //plan part A - trimmed path by the nearest point on the global trajectory
     trimmed_gt_path_.clear();
 
-    std::pair<int, int> start_m = std::make_pair(start_x_i, start_y_i);
+    std::pair<double, double> start_m = std::make_pair(start_x_i, start_y_i);
     global_trajectory_->getTrimmedPath(start_m, trimmed_gt_path_);
 
     //plan part B - from start to the nearest point on the global trajectory
-    double nx = trimmed_gt_path_[0].first;
-    double ny = trimmed_gt_path_[0].second;
+    double nearest_x = trimmed_gt_path_[0].first;
+    double nearest_y = trimmed_gt_path_[0].second;
     //convert into the world coordinate
-    mapToWorld(nx, ny, wx, wy); 
+    mapToWorld(nearest_x, nearest_y, wx, wy); 
     //set the nearest point as new goal
     geometry_msgs::PoseStamped new_goal;
     new_goal.pose.position.x = wx;
@@ -319,11 +319,16 @@ bool GttPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometr
         //extract the plan(part B)
         if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, new_goal, plan)) {
             //combine with part A
+            double world_x, world_y, map_x, map_y;
+            
             for(int i=0; i<trimmed_gt_path_.size(); i++){
                 geometry_msgs::PoseStamped goal_copy;
                 goal_copy.header.frame_id = frame_id_;
-                goal_copy.pose.position.x = trimmed_gt_path_[i].first;
-                goal_copy.pose.position.y = trimmed_gt_path_[i].second;
+                map_x = trimmed_gt_path_[i].first;
+                map_y = trimmed_gt_path_[i].second;
+                mapToWorld(map_x, map_y, world_x, world_y);
+                goal_copy.pose.position.x = world_x;
+                goal_copy.pose.position.y = world_y;
                 goal_copy.header.stamp = ros::Time::now();
                 plan.push_back(goal_copy);
             }

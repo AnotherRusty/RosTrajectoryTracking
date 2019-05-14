@@ -42,18 +42,18 @@ bool GlobalTrajectory::loadPath(const std::string& file){
     YAML::Node node = YAML::LoadFile(path_dir+f_);
     std::string path_name = node["global_path"]["name"].as<std::string>();
 
-    gt_.clear()
-    gt_ = node["global_path"]["waypoints"].as<std::vector<std::pair<int, int> > >();
-    ROS_INFO("Global path <%s> loaded successfully, containing %d waypoints.", path_name.c_str(), gt_.size());
+    gt_.clear();
+    gt_ = node["global_path"]["waypoints"].as<std::vector<std::pair<double, double> > >();
+    ROS_INFO("Global path <%s> loaded successfully, containing %d waypoints.", path_name.c_str(), int(gt_.size()));
 
     return true;
 }
 
-void GlobalTrajectory::getFullPath(std::vector<std::pair<int, int> >& path){
+void GlobalTrajectory::getFullPath(std::vector<std::pair<double, double> >& path){
     path = gt_;
 }
 
-void GlobalTrajectory::getTrimmedPath(const std::pair<int, int>& start, std::vector<std::pair<int, int> >& path){
+void GlobalTrajectory::getTrimmedPath(const std::pair<double, double>& start, std::vector<std::pair<double, double> >& path){
     path.clear();
     int nearest = getNearestPoint(start.first, start.second);
     for(int i=nearest; i<gt_.size(); i++){

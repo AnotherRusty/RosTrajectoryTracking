@@ -25,6 +25,7 @@
 #ifndef _GLOBAL_TRAJECTORY_H
 #define _GLOBAL_TRAJECTORY_H
 
+#include <ros/ros.h>
 
 namespace gtt_planner {
 
@@ -44,13 +45,13 @@ class GlobalTrajectory
         /**
          * @brief  Get the full global trajectory.
          */
-        void getFullPath(std::vector<std::pair<int, int> >& path);
+        void getFullPath(std::vector<std::pair<double, double> >& path);
 
         /**
          * @brief  Get the trimmed global trajectory to track.
          * @param start  The start point.
          */
-        void getTrimmedPath(const std::pair<int, int>& start, std::vector<std::pair<int, int> >& path);
+        void getTrimmedPath(const std::pair<double, double>& start, std::vector<std::pair<double, double> >& path);
 
     private:
         /**
@@ -61,7 +62,7 @@ class GlobalTrajectory
          */
         int getNearestPoint(const double& x, const double& y);
 
-        std::vector<std::pair<int, int> > gt_;    // glocal trajectory
+        std::vector<std::pair<double, double> > gt_;    // glocal trajectory
 
 };
 
